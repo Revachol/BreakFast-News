@@ -8,7 +8,7 @@ import Feed from './pages/Feed/Feed-card';
 function App() {
   return (
       <Container maxWidth="lg">
-          <ResponsiveAppBar/>
+          <ResponsiveAppBar sx={{marginBottom: 10 }} />
           <Feed />
 
       </Container>

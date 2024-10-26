@@ -4,8 +4,8 @@ import { Card, CardContent, CardMedia, Typography, Grid, Box } from '@mui/materi
 // Feed Item Component
 function FeedItem({ item }) {
   return (
-    <Grid item xs={12} sm={6} md={4} lg={3}>
-      <Card sx={{ minHeight: 150, maxWidth: 300, marginBottom: 2 }}>
+    <Box sx={{ width: 700, mx: 'auto', marginBottom: 2 }}> {/* mx: 'auto' centers horizontally */}
+      <Card sx={{ minHeight: 150, maxWidth: 700 }}> {/* maxWidth also set to 700 */}
         {item.imageUrl && (
           <CardMedia
             component="img"
@@ -23,7 +23,7 @@ function FeedItem({ item }) {
           </Typography>
         </CardContent>
       </Card>
-    </Grid>
+    </Box>
   );
 }
 
@@ -73,11 +73,11 @@ function Feed() {
   ];
 
   return (
-    <Grid container spacing={2}>
+    <Box>
       {feedData.map((item, index) => (
         <FeedItem key={index} item={item} />
       ))}
-    </Grid>
+    </Box>
   );
 }
 
