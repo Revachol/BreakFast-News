@@ -1,16 +1,20 @@
+"""
+Схемы используются для валидации данных при передаче их между контроллерами и представлениями.
+"""
+
 from pydantic import BaseModel
-from typing import List
 
 
-# Схемы для таблицы `users`
 class UserBase(BaseModel):
-    username: str
-    interests: List[int] = []
+    name: str
+    email: str
+
 
 class UserCreate(UserBase):
     pass
 
-class User(UserBase):
+
+class UserResponse(UserBase):
     id: int
 
     class Config:
