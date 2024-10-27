@@ -10,6 +10,8 @@ sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 # from app.bookings.models import Bookings
 from app.database import Base, DATABASE_URL
 from app.users.model import User
+from app.articles.model import Article
+from app.user_interactions.model import UserInteraction
 
 # from app.hotels.models import Hotels
 # from app.hotels.rooms.models import Rooms

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, JSON
 from app.database import Base
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
 
 
 class Article(Base):

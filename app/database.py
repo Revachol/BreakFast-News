@@ -3,11 +3,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Замените эти параметры на свои
-DATABASE_USER = "sergey"
+DATABASE_USER = "developer"
 DATABASE_PASSWORD = "root"
 DATABASE_HOST = "localhost"
 DATABASE_PORT = "5432"
-DATABASE_NAME = "BreakFast-News"
+DATABASE_NAME = "BreakFast_News"
 
 DATABASE_URL = f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
 
