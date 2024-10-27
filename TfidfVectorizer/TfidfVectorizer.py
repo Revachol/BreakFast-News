@@ -1,9 +1,10 @@
 from collections import defaultdict
 from math import log
 import numpy as np
+import math
 
 
-def calculate_tfidf(text, num_of_tags):
+def calculate_tfidf_old(text, num_of_tags, mongo):
     # Приводим текст к нижнему регистру и разбиваем на слова
     words = text.lower().split()
     total_words = len(words)
@@ -38,6 +39,41 @@ def calculate_tfidf(text, num_of_tags):
                 top_tfidf[min_index] = (word, score)
 
     return top_tfidf
+
+
+def calculate_tfidf(text, mongo):
+    # Подсчет TF для данного текста
+    words = text.lower().split()
+    total_words = len(words)
+    term_freq = defaultdict(int)
+
+    for word in words:
+        if len(word) > 3:  # Пропускаем короткие слова
+            term_freq[word] += 1
+
+    tf_scores = {word: count / total_words for word, count in term_freq.items()}
+    # print(tf_scores)
+
+    # Подсчет IDF для каждого слова на основе всех документов в базе данных
+    idf_scores = {}
+    num_documents = mongo.count_documents(
+        {}
+    )  # Подсчитываем общее количество документов
+    # print(num_documents)
+    for word in tf_scores.keys():
+        # Количество документов, содержащих слово
+        doc_count = mongo.count_documents(
+            {"text": {"$regex": f"\\b{word}\\b", "$options": "i"}}
+        )
+        # Вычисляем IDF с добавлением 1 к числителю и знаменателю, чтобы избежать деления на 0
+        idf_scores[word] = (
+            math.log((num_documents + 1) / (doc_count + 1)) + 1
+        )  # +1 к IDF для минимизации 0
+
+    # Подсчет TF-IDF
+    tfidf_scores = {word: tf_scores[word] * idf_scores[word] for word in tf_scores}
+    print(tfidf_scores)
+    return tfidf_scores
 
 
 def approximate_normal_form(word):

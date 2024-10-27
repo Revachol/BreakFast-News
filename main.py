@@ -3,18 +3,27 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from collections import deque
 from crawler.crawler import Crawler
+from pymongo import MongoClient
 
 # Пример данных для 100 сайтов
 SITES = [
     {
-        "api_url": "https://example.com/api/site1",
-        "target_url": "https://lenta.ru/news/2024/10/26/v-kurskoy-oblasti-vpervye-za-30-let-poyavilsya-novyy-naselennyy-punkt/",
+        "target_url": "https://lenta.ru/",
+        # "target_url": "https://lenta.ru/news/",
+    },
+    {
+        "target_url": "https://mash.ru/news/",
         # "target_url": "https://lenta.ru/news/",
     },
 ]
 
+client = MongoClient("mongodb://root:example@localhost:27017/")
+db = client["articles_db"]  # Название базы данных
+collection = db["articles_collections"]
 
 if __name__ == "__main__":
 
-    crawler = Crawler(SITES, max_depth=2)  # Установите необходимую глубину здесь
+    crawler = Crawler(
+        SITES, max_depth=2, collection=collection
+    )  # Установите необходимую глубину здесь
     asyncio.run(crawler.run())

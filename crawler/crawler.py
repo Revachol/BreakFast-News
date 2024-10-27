@@ -3,37 +3,48 @@ from urllib.parse import urljoin, urlparse
 import aiohttp
 import asyncio
 from datetime import datetime, timedelta
-from TfidfVectorizer.TfidfVectorizer import calculate_tfidf, approximate_normal_form
+from TfidfVectorizer.TfidfVectorizer import calculate_tfidf
 
 
-def parce_lenta_ru(soup, target_url, title):
+def parce_lenta_ru(soup, target_url, title, mongo):
     if "news" not in target_url:
         return
 
-    article = {"title": title, "target_url": target_url, "tags": []}
+    article = {"title": title, "target_url": target_url, "key_words": []}
 
     news_items = soup.find_all(["p"])  # Выбор элементов, содержащих текст новостей
-    document = ""
+    document = ""  # составляем только первые 30 слов
+    counter = 60
     for item in news_items:
         text = item.get_text(strip=True)
         if text:  # Если текст не пустой
             document += text
+            counter -= 1
+        if counter == 0:
+            break
             # print("НОВОСТЬ - ПАРСИМ ТЕГИ")
+    # записываем в монгу
+    mongo.insert_one(
+        {
+            "link": target_url,
+            "text": document,
+        }
+    )
 
-    tfidf = [(el[0], el[1]) for el in calculate_tfidf(document, 5)]
-    #  tfidf_norm = [approximate_normal_form(word) for word in tfidf]
-    article["tags"] = tfidf
-    print(article)
+    article["key_words"] = calculate_tfidf(document, mongo)
+
+    # отправляю article на бекенд
 
 
-parcer_func = {"lenta.ru": parce_lenta_ru}
+parcer_func = {"lenta.ru": parce_lenta_ru, "mash.ru": parce_lenta_ru}
 
 
 class Crawler:
-    def __init__(self, sites, max_depth):
+    def __init__(self, sites, max_depth, collection):
         self.sites = sites
         self.max_depth = max_depth
         self.cache = {}
+        self.mongo = collection
 
     async def parse_website(self, session, target_url, max_depth, current_depth=0):
         if current_depth > max_depth:
@@ -58,7 +69,12 @@ class Crawler:
                     domain = urlparse(target_url).netloc
 
                     # запускаем кастомный парсер считающий метрику для новости
-                    parcer_func[domain](soup, target_url, soup.title.text)
+                    # делаем только, если в монге еще нет такоего target url
+                    existing_document = self.mongo.find_one({"link": target_url})
+                    if not existing_document:
+                        parcer_func[domain](
+                            soup, target_url, soup.title.text, self.mongo
+                        )
 
                     # Извлечение всех ссылок на странице
                     links = [
@@ -83,7 +99,7 @@ class Crawler:
         return datetime.now() - timedelta(hours=2)
 
     async def process_site(self, session, site, max_depth):
-        last_parse_time = await self.get_last_parse_time(session, site["api_url"])
+        last_parse_time = await self.get_last_parse_time(session, site["target_url"])
         if last_parse_time is not None:
             current_time = datetime.now()
             if current_time - last_parse_time > timedelta(hours=1):
