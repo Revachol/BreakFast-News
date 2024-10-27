@@ -12,4 +12,6 @@ app = FastAPI()
 # Подключаем маршруты
 app.include_router(user_router.router)
 app.include_router(article_router.router)
-app.include_router(user_interactions_router.router, prefix="/api", tags=["interactions"])
+app.include_router(
+    user_interactions_router.router, prefix="/api", tags=["interactions"]
+)

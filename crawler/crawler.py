@@ -45,7 +45,10 @@ def parce_lenta_ru(soup, target_url, title, mongo):
         print("Ошибка при отправке данных:", response.status_code, response.text)
 
 
-parcer_func = {"lenta.ru": parce_lenta_ru, "mash.ru": parce_lenta_ru}
+parcer_func = {
+    # "lenta.ru": parce_lenta_ru, "mash.ru": parce_lenta_ru
+    "journal.tinkoff.ru": parce_lenta_ru
+}
 
 
 class Crawler:
