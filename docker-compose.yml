@@ -1,25 +1,26 @@
-version: '3.8'
-
+version: "3.10"
 services:
-  db:
-    image: postgres:latest  # Используем официальный образ PostgreSQL
-    restart: always
-    environment:
-      POSTGRES_USER: developer  # Укажите имя пользователя
-      POSTGRES_PASSWORD: root  # Укажите пароль
-      POSTGRES_DB: BreakFast_News  # Имя базы данных
-    volumes:
-      - postgres_data:/var/lib/postgresql/data  # Для хранения данных
-    ports:
-      - "5432:5432"  # Пробрасываем порт для доступа к базе данных
+  app:
+      build:
+        context: .
+        dockerfile: Dockerfile  # Укажите путь к вашему Dockerfile
+      volumes:
+        - .:/fastapi_app  # Монтируем текущую директорию в контейнер
+      ports:
+        - "9000:8000"  # Пробрасываем порт 8000 на локальную машину
+      environment:
+        - ENVIRONMENT=development  # Пример переменной окружения
+      depends_on:
+        - data_base  # Указываем, что приложение зависит от базы данных
 
-  backend:
-    build:
-      context: ./app  # Укажите путь к вашему бэкенду
-    restart: always
-    depends_on:
-      - db  # Указываем, что бэкенд зависит от базы данных
-    environment:
-      DATABASE_URL: postgres://developer:yourpassword@db:5432/BreakFast_News  # Строка подключения к базе данных
+  data_base:
+    image: postgres:16
+    container_name: breakfast_news
+    command: -p 5433
+    expose:
+      - 5433
+    env_file:
+      - .env-no-dev
     ports:
-      - "8000:8000"  # Пробрасываем порт для доступа к бэкенду
+      - 5433:5433
+
