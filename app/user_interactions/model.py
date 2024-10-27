@@ -10,5 +10,5 @@ class UserInteraction(Base):
     article_id = Column(Integer, ForeignKey("articles.id"), primary_key=True)
     redirect = Column(Boolean, default=False)
 
-    user = relationship("User", back_populates="interactions")
-    article = relationship("Article", back_populates="interactions")
+    # user = relationship("User", back_populates="interactions")
+    # article = relationship("Article", back_populates="interactions")
