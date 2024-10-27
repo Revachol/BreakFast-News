@@ -39,7 +39,6 @@ def get_articles_with_interactions(db: Session):
     return articles
 
 
-"""
 def get_articles_for_user(db: Session, user_id: int):
     # Получение всех статей для указанного пользователя
     articles = (
@@ -49,6 +48,8 @@ def get_articles_for_user(db: Session, user_id: int):
         .all()
     )
     return articles
+
+
 """
 
 
@@ -61,3 +62,4 @@ def get_articles_for_user(db: Session, user_id: int):
         .all()
     )
     return results
+"""

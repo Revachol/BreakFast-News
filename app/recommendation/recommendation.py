@@ -30,7 +30,7 @@ def get_recommendations(
     db,
     left: int,
     right: int,
-    user_id=4,
+    user_id,
 ):
 
     # Получение TF-IDF для всех документов
@@ -44,35 +44,38 @@ def get_recommendations(
     recommendations = []
 
     # Получение TF-IDF для документов, которые пользователь лайкнул
-    # liked_tfidf_vectors = {article.id: article.key_words for article in liked_documents}
-    liked_tfidf_vectors = {}
+    liked_tfidf_vectors = {article.id: article.key_words for article in liked_documents}
 
+    """
+    liked_tfidf_vectors = {}
     for article in liked_documents:
-        # print(article)
         if article[1]:
-            # for el in article[0]:
-            # print(article[0].key_words)
             updated_data = {
                 key: value + (1 - value) / 2
                 for key, value in article[0].key_words.items()
             }
-            # for key, val in article[0].key_words:
-            #    article[0].key_words.values()[key] += (1 - val) / 2
-            # el += (1-el)/2
+
             article[0].key_words = updated_data
+        else:
+            updated_data = {key: value for key, value in article[0].key_words.items()}
+            article[0].key_words = updated_data
+    """
 
     # Вычисление косинусного сходства
     if liked_tfidf_vectors:
         for article in all_documents:
             for liked_doc_id, liked_vector in liked_tfidf_vectors.items():
-                similarity = cosine_similarity(liked_vector, article.key_words)
-                if similarity < 0.9999999999:
-                    recommendations.append((article.id, similarity))
+                if liked_doc_id != article.id:
+                    similarity = cosine_similarity(liked_vector, article.key_words)
+                    if similarity < 0.9999999999:
+                        recommendations.append((article.id, similarity))
 
         # нужны не id а запросы
         recommendations.sort(key=lambda x: x[1], reverse=True)
+        # print(recommendations)
         recs = []
         for id, val in recommendations:
+            # если мы его еще не лайкнули
             recs.append(get_article(db, id))
         recommendations = recs
 
@@ -82,5 +85,5 @@ def get_recommendations(
         # холодный старт
 
     top_n = recommendations[left:right]
-    print(top_n)
+    # print(top_n)
     return top_n
