@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.articles.schema import ArticleCreate, ArticleResponce
 from app.articles import controller
+from app.recommendation.recommendation import get_recommendations
 
 router = APIRouter()
 
@@ -24,3 +25,9 @@ def read_article(article_id: int, db: Session = Depends(get_db)):
 @router.get("/articles/", response_model=list[ArticleResponce])
 def read_articles(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return controller.get_article(db, skip=skip, limit=limit)
+
+
+@router.get("/")
+def read_root(user_id: int = 1, db: Session = Depends(get_db)):
+    get_recommendations(db, 0, 6, user_id)
+    return {"message": "Hello, World!"}

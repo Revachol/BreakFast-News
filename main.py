@@ -7,14 +7,13 @@ from pymongo import MongoClient
 
 # Пример данных для 100 сайтов
 SITES = [
-    {
-        "target_url": "https://lenta.ru/",
-        # "target_url": "https://lenta.ru/news/",
-    },
-    {
-        "target_url": "https://mash.ru/news/",
-        # "target_url": "https://lenta.ru/news/",
-    },
+    # {
+    #    "target_url": "https://lenta.ru/",
+    # },
+    # {
+    #    "target_url": "https://mash.ru/news/",
+    # },
+    {"target_url": "https://journal.tinkoff.ru/tag/breaking-news/"},
 ]
 
 client = MongoClient("mongodb://root:example@localhost:27017/")
