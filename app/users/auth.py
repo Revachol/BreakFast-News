@@ -4,6 +4,7 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer
 
 from app.users.model import User
 from app.config import settings
@@ -11,6 +12,7 @@ from app.config import settings
 # Настройка криптографии
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # Функция для хэширования пароля
 def hash_password(password: str) -> str:
