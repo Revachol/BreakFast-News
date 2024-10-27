@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from app.users import view as user_router
 from app.articles import view as article_router
 from app.user_interactions import view as user_interactions_router
-from app.database import engine, Base
+# from app.database import engine, Base
 
 # Создаем все таблицы
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
