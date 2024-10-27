@@ -4,13 +4,14 @@ import aiohttp
 import asyncio
 from datetime import datetime, timedelta
 from TfidfVectorizer.TfidfVectorizer import calculate_tfidf
+import requests
 
 
 def parce_lenta_ru(soup, target_url, title, mongo):
     if "news" not in target_url:
         return
 
-    article = {"title": title, "target_url": target_url, "key_words": []}
+    article = {"title": title, "link": target_url, "key_words": []}
 
     news_items = soup.find_all(["p"])  # Выбор элементов, содержащих текст новостей
     document = ""  # составляем только первые 30 слов
@@ -34,6 +35,14 @@ def parce_lenta_ru(soup, target_url, title, mongo):
     article["key_words"] = calculate_tfidf(document, mongo)
 
     # отправляю article на бекенд
+    url = "http://127.0.0.1:8000/article"  # Добавлено 'http://'
+
+    response = requests.post(url, json=article)
+
+    if response.status_code == 200:
+        print("Данные успешно отправлены!")
+    else:
+        print("Ошибка при отправке данных:", response.status_code, response.text)
 
 
 parcer_func = {"lenta.ru": parce_lenta_ru, "mash.ru": parce_lenta_ru}

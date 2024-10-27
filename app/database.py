@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Замените эти параметры на свои
-DATABASE_USER = "developer"
+DATABASE_USER = "sergey"
 DATABASE_PASSWORD = "root"
 DATABASE_HOST = "localhost"
 DATABASE_PORT = "5432"
